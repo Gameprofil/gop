@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TextInput, 
-  TouchableOpacity, 
-  Alert, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Alert,
   KeyboardAvoidingView,
   Platform,
-  ScrollView 
+  ScrollView
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -19,7 +19,7 @@ export default function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -28,14 +28,13 @@ export default function RegisterScreen() {
     confirmPassword: '',
   });
 
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value,
     }));
-    // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({
         ...prev,
@@ -45,7 +44,7 @@ export default function RegisterScreen() {
   };
 
   const validateForm = () => {
-    const newErrors: {[key: string]: string} = {};
+    const newErrors: { [key: string]: string } = {};
 
     // First name validation
     if (!formData.firstName.trim()) {
@@ -88,8 +87,8 @@ export default function RegisterScreen() {
 
     setLoading(true);
     try {
-      // Check if email and name are unique
-      const checkResponse = await fetch('http://localhost:3001/api/auth/check-unique', {
+      // 1. Sprawdzenie unikalności
+      const checkResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/check-unique`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -107,7 +106,7 @@ export default function RegisterScreen() {
         if (checkData.error === 'EMAIL_EXISTS') {
           setErrors({ email: 'Ten email jest już zajęty' });
         } else if (checkData.error === 'NAME_EXISTS') {
-          setErrors({ 
+          setErrors({
             firstName: 'Użytkownik o tym imieniu i nazwisku już istnieje',
             lastName: 'Użytkownik o tym imieniu i nazwisku już istnieje'
           });
@@ -118,8 +117,8 @@ export default function RegisterScreen() {
         return;
       }
 
-      // Register user and send verification code
-      const response = await fetch('http://localhost:3001/api/auth/register', {
+      // 2. Rejestracja użytkownika
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -136,7 +135,7 @@ export default function RegisterScreen() {
 
       if (response.ok) {
         Alert.alert(
-          'Sprawdź email', 
+          'Sprawdź email',
           'Kod weryfikacyjny został wysłany na Twój adres email.',
           [
             {
@@ -164,17 +163,17 @@ export default function RegisterScreen() {
       colors={['#000000', '#1a1a1a']}
       style={styles.container}
     >
-      <KeyboardAvoidingView 
-        style={styles.container} 
+      <KeyboardAvoidingView
+        style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
           {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.backButton}
               onPress={() => router.back()}
             >
