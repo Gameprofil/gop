@@ -70,7 +70,8 @@ export default function VerifyEmailScreen() {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/auth/verify-email', {
+      // --- POPRAWKA: fetch na supabase ---
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/verify-email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -85,7 +86,6 @@ export default function VerifyEmailScreen() {
 
       if (response.ok && data.token) {
         await login(data.token, data.user);
-        
         Alert.alert('Sukces', 'Email został zweryfikowany!', [
           {
             text: 'OK',
@@ -114,7 +114,8 @@ export default function VerifyEmailScreen() {
   const handleResendCode = async () => {
     setResendLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/auth/resend-code', {
+      // --- POPRAWKA: fetch na supabase ---
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/resend-code`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
