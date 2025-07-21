@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react-native';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react-native';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginScreen() {
@@ -35,7 +35,6 @@ export default function LoginScreen() {
       ...prev,
       [field]: value,
     }));
-    // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({
         ...prev,
@@ -46,22 +45,17 @@ export default function LoginScreen() {
 
   const validateLoginForm = () => {
     const newErrors: {[key: string]: string} = {};
-
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email.trim()) {
       newErrors.email = 'Email jest wymagany';
     } else if (!emailRegex.test(formData.email)) {
       newErrors.email = 'Nieprawidłowy format email';
     }
-
-    // Password validation
     if (!formData.password) {
       newErrors.password = 'Hasło jest wymagane';
     } else if (formData.password.length < 6) {
       newErrors.password = 'Hasło musi mieć co najmniej 6 znaków';
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -71,7 +65,8 @@ export default function LoginScreen() {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/auth/login', {
+      // UWAGA: tu jest najważniejsza zmiana!
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -86,8 +81,6 @@ export default function LoginScreen() {
 
       if (response.ok && data.token) {
         await login(data.token, data.user);
-        
-        // Check if user has selected profile type
         if (data.user.profileType) {
           router.replace('/(tabs)');
         } else {
