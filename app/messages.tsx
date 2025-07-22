@@ -12,7 +12,6 @@ import {
   Platform,
   Alert,
   Modal,
-  Dimensions
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Send, Search, Phone, Video, MoveHorizontal as MoreHorizontal, Plus, X } from 'lucide-react-native';
