@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { Dimensions } from 'react-native';
+const { width, height } = Dimensions.get('window');
 import { 
   View, 
   Text, 
